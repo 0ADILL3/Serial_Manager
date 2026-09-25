@@ -32,30 +32,31 @@ String Serial_Manager::raw_serial()
   return "";
 }
 
-const Parsed_Args &Serial_Manager::get_args()
+const Parsed_Args &Serial_Manager::get_args(String serial_data)
 {
   parsed_data_.available = false;
   parsed_data_.arg_count = 0;
 
-  String raw = raw_serial();
-  if (raw.length() == 0) return parsed_data_;
+  if (serial_data == "NULL") {serial_data = raw_serial();}
+  
+  if (serial_data.length() == 0) return parsed_data_;
 
   parsed_data_.available = true;
   int start_index = 0;
-  int separator_index = raw.indexOf(separator_);
+  int separator_index = serial_data.indexOf(separator_);
 
   while (separator_index != -1 && parsed_data_.arg_count < MAX_ARGS - 1) 
   {
-    parsed_data_.args[parsed_data_.arg_count] = raw.substring(start_index, separator_index);
+    parsed_data_.args[parsed_data_.arg_count] = serial_data.substring(start_index, separator_index);
     parsed_data_.arg_count++;
     
     start_index = separator_index + 1;
-    separator_index = raw.indexOf(separator_, start_index);
+    separator_index = serial_data.indexOf(separator_, start_index);
   }
 
-  if (start_index < raw.length() && parsed_data_.arg_count < MAX_ARGS) 
+  if (start_index < serial_data.length() && parsed_data_.arg_count < MAX_ARGS) 
   {
-    parsed_data_.args[parsed_data_.arg_count] = raw.substring(start_index);
+    parsed_data_.args[parsed_data_.arg_count] = serial_data.substring(start_index);
     parsed_data_.arg_count++;
   }
 

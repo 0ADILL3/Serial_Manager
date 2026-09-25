@@ -53,5 +53,5 @@ class Serial_Manager
      * @brief Memecah pesan serial terbaru berdasarkan separator dan memperbarui data internal kelas.
      * @return Referensi statis (read-only) ke struktur data Parsed_Args.
      */
-    const Parsed_Args &get_args(); 
+    const Parsed_Args &get_args(String serial_data = "NULL");
 };
