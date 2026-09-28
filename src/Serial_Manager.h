@@ -2,14 +2,28 @@
 
 #include <Arduino.h>
 
-#define MAX_BUFFER_SIZE 128
-#define MAX_ARGS        10
+#ifndef SERIAL_MANAGER_MAX_BUFFER_SIZE
+  #define SERIAL_MANAGER_MAX_BUFFER_SIZE 128
+#endif
+#ifndef SERIAL_MANAGER_MAX_ARGS
+  #define SERIAL_MANAGER_MAX_ARGS        7
+#endif
 
+/**
+ * @struct Parsed_Args
+ * @brief Wadah struktur data hasil pemecahan pesan serial.
+ * @param available Status ketersediaan pesan baru yang berhasil diproses.
+ * @param arg_count Jumlah total argumen yang berhasil diekstrak dari pesan.
+ * @param args[SERIAL_MANAGER_MAX_ARGS] Array penampung argumen teks berukuran statis.
+ */
 struct Parsed_Args
 {
+  /** @brief Status ketersediaan pesan baru yang berhasil diproses. */
   bool available;
+  /** @brief Jumlah total argumen yang berhasil diekstrak dari pesan. */
   int arg_count;
-  String args[MAX_ARGS];
+  /** @brief Array penampung argumen teks berukuran statis. */
+  String args[SERIAL_MANAGER_MAX_ARGS];
 };
 
 /**
@@ -50,8 +64,15 @@ class Serial_Manager
     String raw_serial();
     
     /**
-     * @brief Memecah pesan serial terbaru berdasarkan separator dan memperbarui data internal kelas.
+     * @brief Memecah pesan serial dengan menarik data secara otomatis dari antarmuka serial.
      * @return Referensi statis (read-only) ke struktur data Parsed_Args.
      */
-    const Parsed_Args &get_args(String serial_data = "NULL");
+    const Parsed_Args& get_args();
+
+    /**
+     * @brief Memecah pesan dari variabel string eksternal (Pass-by-const-reference untuk hemat RAM).
+     * @param serial_data Referensi konstan memori dari string yang akan di-parsing.
+     * @return Referensi statis (read-only) ke struktur data Parsed_Args.
+     */
+    const Parsed_Args &get_args(const String& serial_data);
 };
