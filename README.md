@@ -17,16 +17,23 @@ Pustaka C++ ringan untuk ekosistem Arduino yang menangani pembacaan komunikasi s
 ## Spesifikasi API Teknis
 Pustaka ini membatasi kapasitas memori secara bawaan (bisa dimodifikasi di file `.h` jika diperlukan):
 - `MAX_BUFFER_SIZE`: 128 karakter. Jika panjang pesan yang datang belum menemui `\n` melebihi 128 karakter, sisa pesan akan dipotong (dibuang) secara aman.
-- `MAX_ARGS`: 10 potong argumen per satu kali siklus pemecahan data. 
+- `MAX_ARGS`: 7 potong argumen per satu kali siklus pemecahan data. 
 
 ## Contoh Penggunaan
 Kirimkan pesan melalui Serial Monitor dengan format argumen yang dipisahkan koma dan diakhiri dengan tombol Enter (Newline `\n`). Contoh: `LED,ON,255`
 
 ```cpp
-#include <Serial_Manager.h>
+#include "Serial_Manager.h"
 
-// Inisialisasi manajer pada port Serial utama dengan pemisah koma (',')
-Serial_Manager manager(&Serial, ',');
+// 1. Tentukan alokasi ukuran memori (reserve) untuk masing-masing argumen.
+// Sesuaikan jumlah elemen dan ukurannya dengan kebutuhan memori Anda (maks 255 karakter per elemen).
+const uint8_t custom_reserves[] = {20, 10, 15}; 
+
+// 2. Hitung panjang array secara otomatis untuk mencegah pembacaan memori di luar batas
+const uint8_t reserve_len = sizeof(custom_reserves) / sizeof(custom_reserves[0]);
+
+// 3. Inisialisasi manajer pada port Serial utama, pemisah koma (','), dan pengaturan memori khusus
+Serial_Manager manager(&Serial, ',', custom_reserves, reserve_len);
 
 void setup() {
   manager.begin(115200);
@@ -34,7 +41,7 @@ void setup() {
 }
 
 void loop() {
-  // Ambil referensi data ke variabel lokal (harus menggunakan const dan &)
+  // Ambil referensi data ke variabel lokal (harus menggunakan const dan & untuk efisiensi RAM)
   const Parsed_Args& data = manager.get_args();
 
   // Cek apakah ada paket data utuh yang baru saja masuk

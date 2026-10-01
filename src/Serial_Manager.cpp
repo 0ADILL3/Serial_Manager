@@ -1,14 +1,16 @@
 #include "Serial_Manager.h"
 
-Serial_Manager::Serial_Manager(HardwareSerial* serial, char separator)
+Serial_Manager::Serial_Manager(HardwareSerial* serial, char separator, const uint8_t reserve_sizes[], uint8_t reserve_len)
 {
   serial_ = serial;
   separator_ = separator;
   buffer_.reserve(SERIAL_MANAGER_MAX_BUFFER_SIZE); 
   
-  for (int i = 0; i < SERIAL_MANAGER_MAX_ARGS; i++)
+  for (uint8_t i = 0; i < SERIAL_MANAGER_MAX_ARGS; i++)
   {
-    parsed_data_.args[i].reserve(15); 
+    uint8_t reserve_size = 15;
+    if (reserve_sizes != nullptr && i < reserve_len) {reserve_size = reserve_sizes[i];}
+    parsed_data_.args[i].reserve(reserve_size); 
   }
 }
 

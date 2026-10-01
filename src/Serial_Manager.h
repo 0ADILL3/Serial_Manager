@@ -6,7 +6,7 @@
   #define SERIAL_MANAGER_MAX_BUFFER_SIZE 128
 #endif
 #ifndef SERIAL_MANAGER_MAX_ARGS
-  #define SERIAL_MANAGER_MAX_ARGS        7
+  #define SERIAL_MANAGER_MAX_ARGS        5
 #endif
 
 /**
@@ -48,8 +48,10 @@ class Serial_Manager
      * @brief Konstruktor inisialisasi manajer serial.
      * @param serial Pointer ke antarmuka HardwareSerial (default: &Serial).
      * @param separator Karakter pemisah antar argumen pada pesan masuk (default: ' ').
+     * @param reserve_sizes Array berisi ukuran reserve (maks 255) untuk masing-masing argumen (default: nullptr).
+     * @param reserve_len Jumlah elemen di dalam array reserve_sizes (default: 0).
      */
-    Serial_Manager(HardwareSerial* serial = &Serial, char separator = ' ');
+    Serial_Manager(HardwareSerial* serial = &Serial, char separator = ' ', const uint8_t reserve_sizes[] = nullptr, uint8_t reserve_len = 0);
     
     /**
      * @brief Memulai jalur komunikasi serial.
